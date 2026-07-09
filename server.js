@@ -11,6 +11,13 @@ app.use(express.json());
 
 app.use('/api/v1', routes);
 
+app.get('/', (req, res) => {
+  res.json({
+    status: "success",
+    message: "Server MokaBE berjalan dengan baik di Vercel!"
+  });
+});
+
 app.use((err, req, res, next) => {
   console.error("GLOBAL ERROR HANDLER:", err);
   res.status(err.status || 500).json({
