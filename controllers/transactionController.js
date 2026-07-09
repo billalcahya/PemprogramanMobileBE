@@ -47,11 +47,31 @@ const getHistory = async (req, res) => {
 const getDetail = async (req, res) => {
     try {
         const { id } = req.params;
-        const data = await transactionService.getTransactionDetail(id);
+        
+        const itemsData = await transactionService.getTransactionDetail(id);
+        
+        const formattedData = [
+            {
+                id: parseInt(id),
+                transaction_code: `TRX-${id}`, 
+                user_id: 1, 
+                total_amount: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
+                discount_amount: 0,
+                grand_total: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
+                payment_method: "Cash",
+                payment_amount: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
+                change_amount: 0,
+                status: "completed",
+                void_reason: null,
+                created_at: new Date().toISOString(),
+                items: itemsData
+            }
+        ];
+
         return res.status(200).json({
             status: "success",
             message: "Berhasil mengambil rincian detail transaksi",
-            data
+            data: formattedData 
         });
     } catch (error) {
         return res.status(500).json({ status: "error", message: error.message });
