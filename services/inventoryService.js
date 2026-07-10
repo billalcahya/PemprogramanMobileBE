@@ -1,10 +1,11 @@
 const supabase = require('../config/supabase');
 
 const getAllInventory = async () => {
-  // Mengambil semua data inventori dan memuat nama produknya (FR-05)
+  // Mengambil data inventori dan menambahkan pengurutan berdasarkan ID produk secara ascending (A-Z / 1-9)
   const { data, error } = await supabase
     .from('inventory')
-    .select('*, products(name)');
+    .select('*, products(name)')
+    .order('product_id', { ascending: true }); // <--- TAMBAHKAN BARIS INI
 
   if (error) throw error;
   return data;
