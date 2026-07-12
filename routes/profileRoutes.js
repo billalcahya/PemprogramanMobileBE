@@ -7,5 +7,7 @@ router.get('/', authMiddleware, profileController.getProfile);
 router.post('/', profileController.createProfile); // Pembuatan akun baru umumnya tidak memerlukan authMiddleware
 router.put('/', authMiddleware, profileController.updateProfile);
 router.delete('/', authMiddleware, profileController.deleteProfile);
+router.get('/all', authMiddleware, profileController.getAllProfiles); 
+router.get('/:id', authMiddleware, profileController.getProfile);
 
 module.exports = router;

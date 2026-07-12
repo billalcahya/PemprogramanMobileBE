@@ -14,6 +14,19 @@ const getProfile = async (req, res) => {
   }
 };
 
+const getAllProfiles = async (req, res) => {
+  try {
+    const data = await profileService.getAllProfiles();
+    return res.status(200).json({
+      status: "success",
+      message: "Berhasil mengambil seluruh profil pengguna",
+      data 
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
+};
+
 const createProfile = async (req, res) => {
   try {
     const { email, password, full_name, phone, avatar_url, role } = req.body;
@@ -68,6 +81,7 @@ const deleteProfile = async (req, res) => {
 
 module.exports = {
   getProfile,
+  getAllProfiles,
   createProfile,
   updateProfile,
   deleteProfile
