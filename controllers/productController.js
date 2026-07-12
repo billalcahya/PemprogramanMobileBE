@@ -56,7 +56,7 @@ const addProduct = async (req, res) => {
 
       // Upload ke bucket Supabase bernama 'product-images' (pastikan bucket ini sudah dibuat di dashboard Supabase Anda)                                                                          
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('product-images')
+        .from('products')
         .upload(`products/${fileName}`, req.file.buffer, {
           contentType: req.file.mimetype,
           upsert: true
@@ -68,7 +68,7 @@ const addProduct = async (req, res) => {
 
       // Ambil Public URL gambar yang diunggah                                                                                                                                                     
       const { data: urlData } = supabase.storage
-        .from('product-images')
+        .from('products')
         .getPublicUrl(`products/${fileName}`);
 
       image_url = urlData.publicUrl;
