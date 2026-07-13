@@ -49,11 +49,13 @@ const createProfile = async (profileData) => {
 };
 
 const updateProfile = async (userId, updateData) => {
-  const { full_name, phone, avatar_url, password } = updateData;
+  const { full_name, email, phone, avatar_url, password, role } = updateData;
   const updates = {
     full_name,
+    email,
     phone,
     avatar_url,
+    role,
     updated_at: new Date()
   };
 
