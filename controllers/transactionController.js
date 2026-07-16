@@ -1,4 +1,5 @@
 const transactionService = require('../services/transactionService');
+const supabase = require('../config/supabase');
 
 const createTransaction = async (req, res) => {
     try {
@@ -48,10 +49,8 @@ const getDetail = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // 1. Ambil data item dari transaction_details via service
         const itemsData = await transactionService.getTransactionDetail(id);
         
-        // 2. Ambil data induk transaksi langsung dari tabel transactions di Supabase
         const { data: transactionInfo, error: txError } = await supabase
             .from('transactions')
             .select('*')
@@ -65,7 +64,6 @@ const getDetail = async (req, res) => {
             });
         }
         
-        // 3. Susun data respons dengan nilai asli dari database
         const formattedData = [
             {
                 id: transactionInfo.id,
@@ -77,8 +75,8 @@ const getDetail = async (req, res) => {
                 payment_method: transactionInfo.payment_method,
                 payment_amount: parseFloat(transactionInfo.payment_amount),
                 change_amount: parseFloat(transactionInfo.change_amount || 0),
-                status: transactionInfo.status,          // <-- Mengambil nilai asli ('completed' / 'voided')
-                void_reason: transactionInfo.void_reason, // <-- Mengambil nilai void_reason asli dari Supabase
+                status: transactionInfo.status,         
+                void_reason: transactionInfo.void_reason, 
                 created_at: transactionInfo.created_at,
                 items: itemsData
             }
