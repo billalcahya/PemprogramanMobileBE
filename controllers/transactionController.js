@@ -48,22 +48,38 @@ const getDetail = async (req, res) => {
     try {
         const { id } = req.params;
         
+        // 1. Ambil data item dari transaction_details via service
         const itemsData = await transactionService.getTransactionDetail(id);
         
+        // 2. Ambil data induk transaksi langsung dari tabel transactions di Supabase
+        const { data: transactionInfo, error: txError } = await supabase
+            .from('transactions')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (txError || !transactionInfo) {
+            return res.status(404).json({ 
+                status: "error", 
+                message: "Data transaksi tidak ditemukan" 
+            });
+        }
+        
+        // 3. Susun data respons dengan nilai asli dari database
         const formattedData = [
             {
-                id: parseInt(id),
-                transaction_code: `TRX-${id}`, 
-                user_id: 1, 
-                total_amount: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
-                discount_amount: 0,
-                grand_total: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
-                payment_method: "Cash",
-                payment_amount: itemsData.reduce((sum, item) => sum + (item.subtotal || 0), 0),
-                change_amount: 0,
-                status: "completed",
-                void_reason: null,
-                created_at: new Date().toISOString(),
+                id: transactionInfo.id,
+                transaction_code: transactionInfo.transaction_code, 
+                user_id: transactionInfo.user_id, 
+                total_amount: parseFloat(transactionInfo.total_amount),
+                discount_amount: parseFloat(transactionInfo.discount_amount || 0),
+                grand_total: parseFloat(transactionInfo.grand_total),
+                payment_method: transactionInfo.payment_method,
+                payment_amount: parseFloat(transactionInfo.payment_amount),
+                change_amount: parseFloat(transactionInfo.change_amount || 0),
+                status: transactionInfo.status,          // <-- Mengambil nilai asli ('completed' / 'voided')
+                void_reason: transactionInfo.void_reason, // <-- Mengambil nilai void_reason asli dari Supabase
+                created_at: transactionInfo.created_at,
                 items: itemsData
             }
         ];
