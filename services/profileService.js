@@ -16,7 +16,7 @@ const getAllProfiles = async () => {
   const { data, error } = await supabase
     .from('users')
     .select('id, email, full_name, phone, avatar_url, role, created_at, updated_at')
-    .order('created_at', { ascending: false }); // Mengurutkan dari yang terbaru
+    .order('created_at', { ascending: false });  
 
   if (error) throw error;
   return data;

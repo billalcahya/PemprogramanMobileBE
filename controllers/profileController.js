@@ -68,7 +68,6 @@ const updateProfile = async (req, res) => {
 
 const updateProfileById = async (req, res) => {
   try {
-    // Ambil ID dari parameter URL (misal: /api/v1/profile/3)
     const userId = req.params.id; 
     const { full_name, phone, avatar_url, password, role } = req.body;
 
@@ -76,7 +75,6 @@ const updateProfileById = async (req, res) => {
       return res.status(400).json({ status: "error", message: "Nama lengkap wajib diisi" });
     }
 
-    // Menggunakan service yang sama, tapi membawa ID user yang dipilih dari Android
     const data = await profileService.updateProfile(userId, { full_name, phone, avatar_url, password, role });
     
     return res.status(200).json({

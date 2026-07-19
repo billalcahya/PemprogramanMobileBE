@@ -1,6 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// Mengambil variabel lingkungan (env) yang telah dimuat
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 const port = process.env.PORT;
@@ -10,7 +9,6 @@ if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Kredensial Supabase (SUPABASE_URL / SUPABASE_SERVICE_KEY) belum dikonfigurasi di .env');
 }
 
-// Inisialisasi Supabase Client
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 module.exports = supabase;

@@ -1,7 +1,6 @@
 const supabase = require('../config/supabase');
 
 const getDailyReport = async () => {
-  // Ambil semua transaksi sukses dan detailnya
   const { data: transactions, error } = await supabase
     .from('transactions')
     .select('id, grand_total, created_at, status, transaction_details(cost_price, quantity)')
@@ -35,7 +34,6 @@ const getDailyReport = async () => {
 };
 
 const getMonthlyReport = async () => {
-  // Ambil semua transaksi sukses dan detailnya
   const { data: transactions, error } = await supabase
     .from('transactions')
     .select('id, grand_total, created_at, status, transaction_details(cost_price, quantity)')

@@ -4,7 +4,7 @@ const profileController = require('../controllers/profileController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, profileController.getProfile);
-router.post('/', profileController.createProfile); // Pembuatan akun baru umumnya tidak memerlukan authMiddleware
+router.post('/', profileController.createProfile); 
 router.put('/', authMiddleware, profileController.updateProfile);
 router.put('/:id', authMiddleware, profileController.updateProfileById);
 router.delete('/', authMiddleware, profileController.deleteProfile);

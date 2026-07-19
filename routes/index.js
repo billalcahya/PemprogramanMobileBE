@@ -9,7 +9,6 @@ const dashboardRoutes = require('./dashboardRoutes');
 const profileRoutes = require('./profileRoutes');
 const reportRoutes = require('./reportRoutes');
 
-// Gabungkan endpoint auth (Base URL menjadi /api/v1/auth)
 router.use('/auth', authRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/products', productRoutes);

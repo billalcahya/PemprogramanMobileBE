@@ -1,24 +1,19 @@
 const supabase = require('../config/supabase');
 
-// Fungsi baru untuk mendukung filter kategori dan search query (Supabase)
 const getAllProductsFiltered = async (category, search) => {
   let query = supabase
     .from('products')
     .select('*, categories(name)')
     .eq('is_active', true);
 
-  // Jika ada filter kategori (berdasarkan nama atau ID)
   if (category) {
-    // Jika parameter berupa ID Angka
     if (!isNaN(category)) {
       query = query.eq('category_id', parseInt(category));
     } else {
-      // Jika parameter berupa Nama Kategori string
       query = query.eq('categories.name', category);
     }
   }
 
-  // Jika ada pencarian teks nama produk
   if (search) {
     query = query.ilike('name', `%${search}%`);
   }
@@ -113,7 +108,6 @@ const deleteProduct = async (id) => {
   return data;
 };
 
-// Pastikan fungsi baru ini sudah di-export!
 module.exports = {
   getAllProductsFiltered,
   getAllProducts,

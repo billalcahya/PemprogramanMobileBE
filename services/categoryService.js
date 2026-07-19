@@ -4,7 +4,7 @@ const getAllCategories = async () => {
   const { data, error } = await supabase
     .from('categories')
     .select('*')
-    .eq('is_active', true); // Hanya mengambil kategori yang aktif (soft delete)
+    .eq('is_active', true);
 
   if (error) throw error;
   return data;
@@ -47,7 +47,6 @@ const updateCategory = async (id, updateData) => {
 };
 
 const deleteCategory = async (id) => {
-  // Soft delete: set is_active to false
   const { data, error } = await supabase
     .from('categories')
     .update({ is_active: false })

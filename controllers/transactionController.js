@@ -3,7 +3,7 @@ const supabase = require('../config/supabase');
 
 const createTransaction = async (req, res) => {
     try {
-        const userId = req.user.id; // Diambil dari token JWT via authMiddleware
+        const userId = req.user.id;
         const { items, paymentMethod, paymentAmount } = req.body;
 
         if (!items || items.length === 0 || !paymentMethod || paymentAmount === undefined) {
@@ -15,14 +15,12 @@ const createTransaction = async (req, res) => {
 
         const result = await transactionService.checkout(userId, req.body);
 
-        // Kirim respons 201 Created sesuai spesifikasi halaman 17
         return res.status(201).json({
             status: "success",
             message: "Transaksi berhasil",
             data: result
         });
     } catch (error) {
-        // Menangani error unprocessable entity jika stok kurang (Halaman 17)
         return res.status(422).json({
             status: "error",
             message: error.message
@@ -30,7 +28,6 @@ const createTransaction = async (req, res) => {
     }
 };
 
-// Tambahkan fungsi-fungsi ini ke file controllers/transactionController.js kamu:
 
 const getHistory = async (req, res) => {
     try {
@@ -112,9 +109,8 @@ const cancelTransaction = async (req, res) => {
     }
 };
 
-// Update module.exports di bagian bawah controller kamu:
 module.exports = {
-    createTransaction, // fungsi lama kamu
+    createTransaction, 
     getHistory,
     getDetail,
     cancelTransaction
