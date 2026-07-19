@@ -10,13 +10,15 @@ const getAllInventory = async () => {
   return data;
 };
 
-const updateStockManual = async (idOrProductId, current_stock) => {
+const updateStockManual = async (idOrProductId, current_stock, min_stock, unit) => {
+  const updatePayload = { updated_at: new Date() };
+  if (current_stock !== undefined) updatePayload.current_stock = current_stock;
+  if (min_stock !== undefined) updatePayload.min_stock = min_stock;
+  if (unit !== undefined) updatePayload.unit = unit;
+
   let { data, error } = await supabase
     .from('inventory')
-    .update({ 
-      current_stock,
-      updated_at: new Date()
-    })
+    .update(updatePayload)
     .eq('id', idOrProductId)
     .select()
     .single();
@@ -24,10 +26,7 @@ const updateStockManual = async (idOrProductId, current_stock) => {
   if (error || !data) {
     const { data: dataByProd, error: errorByProd } = await supabase
       .from('inventory')
-      .update({ 
-        current_stock,
-        updated_at: new Date()
-      })
+      .update(updatePayload)
       .eq('product_id', idOrProductId)
       .select()
       .single();
@@ -42,4 +41,4 @@ const updateStockManual = async (idOrProductId, current_stock) => {
 module.exports = {
   getAllInventory,
   updateStockManual
-};
+}; 
