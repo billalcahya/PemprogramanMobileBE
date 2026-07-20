@@ -94,13 +94,41 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { category_id, name, sell_price, cost_price, image_url } = req.body;
+    let productData = req.body;
+
+    if (req.body.product_data) {
+      productData = JSON.parse(req.body.product_data);
+    }
+
+    const { sell_price } = productData;
 
     if (sell_price !== undefined && sell_price < 0) {
       return res.status(400).json({ status: "error", message: "Harga jual tidak boleh negatif" });
     }
 
-    const product = await productService.updateProduct(id, req.body);
+    if (req.file) {
+      const fileExtension = req.file.originalname.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExtension}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(`products/${fileName}`, req.file.buffer, {
+          contentType: req.file.mimetype,
+          upsert: true
+        });
+
+      if (uploadError) {
+        throw new Error(`Gagal mengunggah gambar: ${uploadError.message}`);
+      }
+
+      const { data: urlData } = supabase.storage
+        .from('products')
+        .getPublicUrl(`products/${fileName}`);
+
+      productData.image_url = urlData.publicUrl;
+    }
+
+    const product = await productService.updateProduct(id, productData);
     return res.status(200).json({
       status: "success",
       message: "Produk berhasil diperbarui",

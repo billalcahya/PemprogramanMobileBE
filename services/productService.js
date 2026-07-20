@@ -75,16 +75,20 @@ const createProduct = async (productData) => {
 
 const updateProduct = async (id, updateData) => {
   const { category_id, name, sell_price, cost_price, image_url } = updateData;
+
+  const payload = {
+    updated_at: new Date()
+  };
+
+  if (category_id !== undefined) payload.category_id = category_id;
+  if (name !== undefined) payload.name = name;
+  if (sell_price !== undefined) payload.sell_price = sell_price;
+  if (cost_price !== undefined) payload.cost_price = cost_price;
+  if (image_url !== undefined) payload.image_url = image_url; 
+
   const { data, error } = await supabase
     .from('products')
-    .update({
-      category_id,
-      name,
-      sell_price,
-      cost_price,
-      image_url,
-      updated_at: new Date()
-    })
+    .update(payload)
     .eq('id', id)
     .select()
     .single();
