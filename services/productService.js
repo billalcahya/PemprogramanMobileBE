@@ -49,9 +49,47 @@ const getProductById = async (id) => {
 const createProduct = async (productData) => {
   const { category_id, name, sell_price, cost_price, image_url, initial_stock, min_stock, unit } = productData;
 
+  const { data: existingProduct } = await supabase
+    .from('products')
+    .select('*')
+    .ilike('name', name.trim())
+    .maybeSingle();
+
+  if (existingProduct) {
+    const { data: updatedProduct, error: updateError } = await supabase
+      .from('products')
+      .update({
+        category_id,
+        sell_price,
+        cost_price,
+        image_url: image_url || existingProduct.image_url,
+        is_active: true, 
+        updated_at: new Date()
+      })
+      .eq('id', existingProduct.id)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    const { error: invUpdateError } = await supabase
+      .from('inventory')
+      .update({
+        current_stock: initial_stock || 0,
+        min_stock: min_stock || 5,
+        unit: unit || 'pcs',
+        updated_at: new Date()
+      })
+      .eq('product_id', existingProduct.id);
+
+    if (invUpdateError) throw invUpdateError;
+
+    return updatedProduct;
+  }
+
   const { data: product, error: productError } = await supabase
     .from('products')
-    .insert([{ category_id, name, sell_price, cost_price, image_url }])
+    .insert([{ category_id, name: name.trim(), sell_price, cost_price, image_url, is_active: true }])
     .select()
     .single();
 
